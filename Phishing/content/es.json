@@ -1,0 +1,95 @@
+{
+  "locale": "es",
+  "messages": [
+    {
+      "id": "m1",
+      "class": "standard",
+      "priority": 1,
+      "triggerAffinity": ["login_success", "email_change_initiated", "security_settings_viewed"],
+      "title": "Revisa la dirección real del remitente",
+      "body": "Un correo falso puede usar un nombre real. Ese nombre es fácil de copiar. La dirección real puede tener una letra rara. Lee bien la dirección cada vez.",
+      "actions": ["report_phishing", "acknowledge_dismiss"]
+    },
+    {
+      "id": "m2",
+      "class": "standard",
+      "priority": 1,
+      "triggerAffinity": ["login_success", "security_settings_viewed"],
+      "title": "Mira antes de tocar",
+      "body": "No toques un enlace para probarlo. En la computadora, pon el ratón sobre el enlace. Verás a dónde te lleva. En el móvil, deja el dedo en el enlace. Si se ve raro, no lo abras.",
+      "actions": ["report_phishing", "acknowledge_dismiss"]
+    },
+    {
+      "id": "m3",
+      "class": "standard",
+      "priority": 1,
+      "triggerAffinity": ["login_success", "password_change_initiated", "security_settings_viewed"],
+      "title": "Con prisa y miedo, ten cuidado",
+      "body": "Los fraudes te apuran. Dicen que tu cuenta se cerrará. Dicen que debes actuar ya. El miedo es la señal más clara. Ve despacio. Un banco real te da tiempo.",
+      "actions": ["report_phishing", "acknowledge_dismiss"]
+    },
+    {
+      "id": "m4",
+      "class": "standard",
+      "priority": 1,
+      "triggerAffinity": ["login_success", "password_change_initiated", "email_change_initiated", "security_settings_viewed", "new_payee_or_transfer_setup"],
+      "title": "Lo que nunca te pediremos",
+      "body": "Hay datos que nunca te vamos a pedir. Son tu clave, tus códigos y tu tarjeta. No los pedimos por correo, texto ni llamada. Si te los piden, es un fraude. Dilo aquí.",
+      "actions": ["report_phishing", "go_to_security_settings", "acknowledge_dismiss"]
+    },
+    {
+      "id": "m5",
+      "class": "standard",
+      "priority": 1,
+      "triggerAffinity": ["password_change_initiated", "security_settings_viewed"],
+      "title": "Si crees que tocaste un fraude",
+      "body": "Ten calma. Cambia tu clave aquí en la app. No uses un enlace de un correo. Luego habla con soporte en la app. Ellos pueden ver tu cuenta.",
+      "actions": ["go_to_security_settings", "report_phishing", "acknowledge_dismiss"]
+    },
+    {
+      "id": "m6",
+      "class": "standard",
+      "priority": 1,
+      "triggerAffinity": ["login_success", "security_settings_viewed"],
+      "title": "Archivos y códigos QR pueden ser trampas",
+      "body": "Un fraude puede venir en un archivo o un código QR. Un código puede llevarte a una página falsa. No abras un archivo raro. No escanees un código que no conoces.",
+      "actions": ["report_phishing", "acknowledge_dismiss"]
+    },
+    {
+      "id": "r1",
+      "class": "risk_event",
+      "priority": 3,
+      "triggerAffinity": ["new_device_login"],
+      "title": "Un nuevo equipo inició sesión",
+      "body": "Un equipo nuevo entró a tu cuenta. Si fuiste tú, ignora este aviso. Si no fuiste tú, cambia tu clave ahora.",
+      "actions": ["act_now", "acknowledge_dismiss"]
+    },
+    {
+      "id": "r2",
+      "class": "risk_event",
+      "priority": 3,
+      "triggerAffinity": ["new_geo_login"],
+      "title": "Inicio de sesión desde un lugar nuevo",
+      "body": "Usaron tu cuenta desde un lugar nuevo. Si fuiste tú, ignora este aviso. Si no fuiste tú, cambia tu clave ahora y mira tu cuenta.",
+      "actions": ["act_now", "acknowledge_dismiss"]
+    },
+    {
+      "id": "r3",
+      "class": "risk_event",
+      "priority": 3,
+      "triggerAffinity": ["unrequested_password_reset"],
+      "title": "¿Pediste cambiar tu clave?",
+      "body": "Llegó una orden para cambiar tu clave. Si fuiste tú, ignora este aviso. Si no fuiste tú, cambia tu clave ahora.",
+      "actions": ["act_now", "acknowledge_dismiss"]
+    },
+    {
+      "id": "r4",
+      "class": "risk_event",
+      "priority": 3,
+      "triggerAffinity": ["anomalous_transfer_flagged"],
+      "title": "Pago inusual marcado",
+      "body": "Marcamos un pago raro en tu cuenta. Si fuiste tú, ignora este aviso. Si no fuiste tú, cambia tu clave ahora.",
+      "actions": ["act_now", "acknowledge_dismiss"]
+    }
+  ]
+}

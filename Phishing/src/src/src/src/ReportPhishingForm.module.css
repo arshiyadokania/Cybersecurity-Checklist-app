@@ -1,0 +1,50 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1px solid #c7d2e0;
+  background: #ffffff;
+  color: #16222e;
+  padding: 16px;
+  border-radius: 6px;
+  margin: 12px 0;
+  max-width: 480px;
+}
+
+.form label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.form select,
+.form textarea {
+  padding: 8px;
+  border: 1px solid #9fb2c6;
+  border-radius: 4px;
+  font: inherit;
+}
+
+.form textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.actions button {
+  padding: 8px 14px;
+  border-radius: 4px;
+  border: 1px solid #2f6fb2;
+  background: #2f6fb2;
+  color: #fff;
+  cursor: pointer;
+}
+
+.actions button[type='button'] {
+  background: #fff;
+  color: #2f6fb2;
+}

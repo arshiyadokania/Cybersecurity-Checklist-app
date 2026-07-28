@@ -1,0 +1,22 @@
+{
+  "name": "security-pipeline",
+  "version": "1.0.0",
+  "description": "Self-scanning security CI/CD pipeline: SCA, SAST, secrets, SBOM, DAST-baseline, with SARIF consolidation and severity gating",
+  "main": "consolidate.js",
+  "scripts": {
+    "test": "jest",
+    "security:scan": "bash scripts/run-security-scan.sh",
+    "sbom": "bash scripts/generate-sbom.sh",
+    "gate": "node consolidate.js --reports reports --suppressions suppressions.json"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "jest": "29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": ["/node_modules/", "/__fixtures__/"]
+  }
+}

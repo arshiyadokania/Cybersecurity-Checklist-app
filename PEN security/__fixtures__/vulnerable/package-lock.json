@@ -1,0 +1,20 @@
+{
+  "name": "vulnerable-dependency-fixture",
+  "version": "0.0.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "vulnerable-dependency-fixture",
+      "version": "0.0.0",
+      "dependencies": {
+        "lodash": "4.17.4"
+      }
+    },
+    "node_modules/lodash": {
+      "version": "4.17.4",
+      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.4.tgz",
+      "integrity": "sha1-eCA6TRwyiuHYbcpkYONptX9AVa4="
+    }
+  }
+}

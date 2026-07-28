@@ -1,0 +1,9 @@
+[
+  {
+    "ruleId": "GHSA-example-0000-0000",
+    "file": "package-lock.json",
+    "reason": "Transitive dev-only dependency; not reachable in production build. Tracking upstream fix in SEC-1234.",
+    "expiresAt": "2026-12-31",
+    "addedBy": "appsec@example.com"
+  }
+]

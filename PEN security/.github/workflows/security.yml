@@ -1,0 +1,127 @@
+name: Security
+
+# TWO triggers:
+#  - push / pull_request: fast scan of changed code on every change.
+#  - schedule (weekly): full scan of UNCHANGED code to catch newly-disclosed
+#    CVEs in existing dependencies (a repo clean at commit time is not clean
+#    forever). See README "Why scheduled scans".
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: '0 6 * * 1' # Mondays 06:00 UTC
+
+permissions:
+  contents: read
+  security-events: write # required to upload SARIF to the (private) Security tab
+  actions: read
+
+jobs:
+  security:
+    name: Self-scan (SCA / SAST / secrets / SBOM)
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout (full history for secret scanning)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full git history so gitleaks --log-opts can scan it
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Python (for Semgrep)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install pinned scanners (explicit version pins only)
+        run: |
+          set -euo pipefail
+          OSV_SCANNER_VERSION="1.9.2"
+          SEMGREP_VERSION="1.96.0"
+          GITLEAKS_VERSION="8.21.2"
+          SYFT_VERSION="1.18.1"
+
+          curl -sSfL "https://github.com/google/osv-scanner/releases/download/v${OSV_SCANNER_VERSION}/osv-scanner_linux_amd64" \
+            -o /usr/local/bin/osv-scanner
+          chmod +x /usr/local/bin/osv-scanner
+
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+            | tar -xz -C /usr/local/bin gitleaks
+
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh \
+            | sh -s -- -b /usr/local/bin "v${SYFT_VERSION}"
+
+          python -m pip install --upgrade pip
+          pip install "semgrep==${SEMGREP_VERSION}"
+
+      - name: Install project dependencies
+        run: npm ci
+
+      - name: Run unit tests (consolidation gate logic)
+        run: npm test
+
+      - name: Run security scan (FAIL-CLOSED gate)
+        run: npm run security:scan
+
+      - name: Generate CycloneDX SBOM
+        if: always()
+        run: npm run sbom
+
+      - name: Upload SARIF to code scanning (private Security tab)
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: reports
+          category: self-scan
+
+      - name: Upload SBOM artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-cyclonedx
+          path: reports/sbom.cyclonedx.json
+          if-no-files-found: error
+
+  dast:
+    name: DAST (ZAP baseline, passive, localhost only)
+    runs-on: ubuntu-24.04
+    # This job scans a LOCAL instance of the app on localhost only — never an
+    # external target. It runs only when APP_URL is configured; otherwise it
+    # skips CLEANLY and never reports a fake pass.
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: DAST feasibility
+        id: feasible
+        run: |
+          if [ -n "${{ vars.APP_URL }}" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "DAST skipped cleanly: set the repository variable APP_URL to a localhost app URL to enable the ZAP baseline scan."
+          fi
+
+      # Start the app on localhost here (e.g. `npm start &` + wait-for-port),
+      # then run the pinned ZAP baseline image in passive mode against it.
+      - name: ZAP baseline (passive) against local app
+        if: steps.feasible.outputs.enabled == 'true'
+        run: |
+          set -euo pipefail
+          ZAP_VERSION="2.15.0"
+          mkdir -p reports
+          docker run --rm --network host \
+            -v "$PWD/reports:/zap/wrk:rw" \
+            "ghcr.io/zaproxy/zaproxy:${ZAP_VERSION}" \
+            zap-baseline.py -t "${{ vars.APP_URL }}" -J zap-baseline.json -x zap-baseline.xml
+
+      - name: Upload ZAP report
+        if: always() && steps.feasible.outputs.enabled == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-baseline
+          path: reports/zap-baseline.*
